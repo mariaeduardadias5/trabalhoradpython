@@ -1,0 +1,30 @@
+<h1>Nova Reserva</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <label>Sala:</label>
+    <select name="sala">
+        {% for sala in salas %}
+        <option value="{{ sala.id }}">{{ sala.nome }} (Capacidade: {{ sala.capacidade }})</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label>Data:</label>
+    <input type="date" name="data"><br><br>
+
+    <label>Hora Início:</label>
+    <input type="time" name="hora_inicio"><br><br>
+
+    <label>Hora Fim:</label>
+    <input type="time" name="hora_fim"><br><br>
+
+    <label>Itens:</label><br>
+    {% for item in itens %}
+        <input type="checkbox" name="itens" value="{{ item.id }}"> {{ item.nome }}<br>
+    {% endfor %}
+
+    <br>
+    <button type="submit">Reservar</button>
+</form>
+
+<a href="{% url 'home' %}">Voltar</a>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Salas e Reservas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        {% if request.user.is_authenticated %}
+            <h2>Seja bem-vindo, {{ request.user.username }}!</h2>
+            <div>
+                <a href="{% url 'nova_reserva' %}" class="btn btn-primary me-2">Nova Reserva</a>
+                <a href="{% url 'minhas_reservas' %}">Minhas Reservas</a>
+                <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Sair</button>
+            </form>
+            </div>
+        {% else %}
+            <h2>Bem-vindo ao Sistema de Reservas</h2>
+            <div>
+                <a href="{% url 'login' %}" class="btn btn-success me-2">Login</a>
+                <a href="{% url 'signup' %}" class="btn btn-primary">Cadastrar</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Salas e reservas -->
+    {% if request.user.is_authenticated %}
+        {% for sala_info in salas_status %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <strong>{{ sala_info.sala.nome }}</strong> - Capacidade: {{ sala_info.sala.capacidade }}
+                </div>
+                <div class="card-body">
+                    {% if sala_info.reserva_atual %}
+                        <p class="text-danger"><strong>Ocupada agora por:</strong> {{ sala_info.reserva_atual.usuario.username }}</p>
+                        <p><strong>Horário:</strong> {{ sala_info.reserva_atual.hora_inicio }} - {{ sala_info.reserva_atual.hora_fim }}</p>
+                        <p><strong>Itens:</strong>
+                            {% for item in sala_info.reserva_atual.itens.all %}
+                                {{ item.nome }}{% if not forloop.last %}, {% endif %}
+                            {% empty %} Nenhum {% endfor %}
+                        </p>
+                    {% else %}
+                        <p class="text-success"><strong>Disponível agora ✅</strong></p>
+                    {% endif %}
+
+                    {% if sala_info.reservas %}
+                        <hr>
+                        <p><strong>Reservas do dia:</strong></p>
+                        <ul>
+                            {% for r in sala_info.reservas %}
+                                <li>{{ r.hora_inicio }} - {{ r.hora_fim }}: {{ r.usuario.username }} | Itens: 
+                                    {% for item in r.itens.all %}
+                                        {{ item.nome }}{% if not forloop.last %}, {% endif %}
+                                    {% empty %} Nenhum {% endfor %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="mt-4">Para ver as salas e reservas, faça login ou cadastre-se.</p>
+    {% endif %}
+
+</div>
+</body>
+</html>
