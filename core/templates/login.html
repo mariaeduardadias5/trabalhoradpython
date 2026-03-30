@@ -1,11 +1,36 @@
-<h1>Login</h1>
-<form method="post">
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow p-4">
+
+            <h2 class="text-center mb-4">🔐 Login</h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+              <form method="post">
     {% csrf_token %}
-    <label>Username:</label>
-    <input type="text" name="username"><br><br>
-
-    <label>Password:</label>
-    <input type="password" name="password"><br><br>
-
-    <button type="submit">Login</button>
+    <div class="mb-3">
+        <label for="email">E-mail</label>
+        <input type="text" name="email" id="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="password">Senha</label>
+        <input type="password" name="password" id="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-success">Entrar</button>
 </form>
+
+            <hr>
+
+            <p class="text-center">
+                Não tem conta? 
+                <a href="{% url 'signup' %}">Cadastre-se</a>
+            </p>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

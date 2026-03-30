@@ -4,24 +4,29 @@ from django.contrib import messages
 from django.utils import timezone
 from datetime import datetime
 from .models import Sala, Item, Reserva
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from .forms import CustomUserCreationForm
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
 
-# Página inicial
+
 @login_required
 def home(request):
     salas = Sala.objects.all()
-    agora = timezone.localtime()  # horário do Brasil, datetime aware
+    agora = timezone.localtime()  
 
     salas_status = []
     for sala in salas:
         reserva_atual = None
 
-        # Pega todas reservas do dia
+       
         reservas_do_dia = Reserva.objects.filter(
             sala=sala,
             data=agora.date()
         ).order_by('hora_inicio')
 
-        # Verifica se a sala está ocupada agora
+        
         for r in reservas_do_dia:
             inicio = timezone.make_aware(datetime.combine(r.data, r.hora_inicio))
             fim = timezone.make_aware(datetime.combine(r.data, r.hora_fim))
@@ -39,7 +44,7 @@ def home(request):
 
     return render(request, 'home.html', {'salas_status': salas_status})
 
-# Nova reserva
+
 @login_required
 def nova_reserva(request):
     salas = Sala.objects.all()
@@ -54,7 +59,7 @@ def nova_reserva(request):
 
         sala = Sala.objects.get(id=sala_id)
 
-        # Verifica se a sala já está ocupada no horário escolhido
+        
         reservas_existentes = Reserva.objects.filter(
             sala=sala,
             data=data,
@@ -79,7 +84,6 @@ def nova_reserva(request):
 
     return render(request, 'nova_reserva.html', {'salas': salas, 'itens': itens})
 
-# Minhas reservas
 @login_required
 def minhas_reservas(request):
     reservas = Reserva.objects.filter(usuario=request.user).order_by('data', 'hora_inicio')
@@ -110,3 +114,31 @@ def deletar_reserva(request, reserva_id):
     reserva.delete()
     messages.success(request, "Reserva excluída!")
     return redirect('minhas_reservas')
+
+def signup(request):
+    if request.method == "POST":
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'signup.html', {'form': form})
+
+
+def login_view(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        senha = request.POST.get("password")
+        try:
+            user = User.objects.get(email=email)
+            user = authenticate(username=user.username, password=senha)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('home')
+            else:
+                messages.error(request, "Senha incorreta.")
+        except User.DoesNotExist:
+            messages.error(request, "Email não encontrado.")
+    return render(request, 'login.html')
