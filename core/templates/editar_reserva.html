@@ -1,40 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Reserva</title>
 
-{% block content %}
-<h2>Editar Reserva</h2>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<form method="post">
-    {% csrf_token %}
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <label for="sala">Sala:</label>
-    <select name="sala" id="sala" required>
-        {% for sala in salas %}
-            <option value="{{ sala.id }}" {% if reserva.sala.id == sala.id %}selected{% endif %}>
-                {{ sala.nome }} - Capacidade: {{ sala.capacidade }}
-            </option>
-        {% endfor %}
-    </select>
-    <br><br>
+    <style>
+        .card-editar {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    background-color: #fff;
+}
 
-    <label for="data">Data:</label>
-    <input type="date" name="data" id="data" value="{{ reserva.data }}" required>
-    <br><br>
+.btn-minhas {
+    background-color: #4e8cff;
+    color: #fff;
+}
+.btn-minhas:hover {
+    background-color: #3b6fd0;
+}
 
-    <label for="hora_inicio">Hora Início:</label>
-    <input type="time" name="hora_inicio" id="hora_inicio" value="{{ reserva.hora_inicio }}" required>
-    <br><br>
+.form-check-input:checked {
+    background-color: #6f42c1;
+    border-color: #6f42c1;
+}
 
-    <label for="hora_fim">Hora Fim:</label>
-    <input type="time" name="hora_fim" id="hora_fim" value="{{ reserva.hora_fim }}" required>
-    <br><br>
+.form-check-label {
+    font-weight: 500;
+}
 
-    <label>Itens:</label><br>
-    {% for item in itens %}
-        <input type="checkbox" name="itens" value="{{ item.id }}"
-            {% if item in reserva.itens.all %}checked{% endif %}>
-        {{ item.nome }}<br>
-    {% endfor %}
-    <br>
+.navbar-custom {
+            background-color: #6f42c1;
+        }
 
-    <button type="submit">Atualizar Reserva</button>
-</form>
-{% endblock %}
+        .navbar-custom a {
+            color: #fff;
+        }
+
+        .btn-nova {
+            background-color: #5a35a6;
+            color: #fff;
+        }
+
+        .btn-nova:hover {
+            background-color: #472b81;
+        }
+
+        .btn-minhas {
+            background-color: #4e8cff;
+            color: #fff;
+        }
+
+        .btn-minhas:hover {
+            background-color: #3b6fd0;
+        }
+
+        .btn-home{
+          background-color: rgb(255, 255, 255) !important;
+          color: #000000 !important;
+        }
+        
+
+        .btn-home:hover{
+            background-color: rgb(185, 184, 185) !important;;
+            color: #000000 !important;;
+        }
+
+        .btn-atualizar {
+    background-color: #6f42c1; 
+    color: #fff !important;
+    border: none;
+}
+
+.btn-atualizar:hover {
+    background-color: #5a35a6;
+    color: #fff !important;
+}
+
+</style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom px-4 py-3 mb-4">
+    <a class="navbar-brand fw-bold" href="{% url 'home' %}">Sistema de Reservas</a>
+
+    <div class="ms-auto">
+        <a href="{% url 'home' %}" class="btn btn-home btn-sm me-2">Home</a>
+        <a href="{% url 'minhas_reservas' %}" class="btn btn-minhas btn-sm me-2">Minhas Reservas</a>
+        <a href="{% url 'nova_reserva' %}" class="btn btn-nova btn-sm me-2">Nova Reserva</a>     
+    </div>
+</nav>
+
+    <div class="container mt-4">
+    <h2 class="mb-4">Editar Reserva</h2>
+
+    <div class="card p-4 card-editar">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="nome_evento" class="form-label">Nome do Evento:</label>
+                <input type="text" name="nome_evento" id="nome_evento"
+                       value="{{ reserva.nome_evento }}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="sala" class="form-label">Sala:</label>
+                <select name="sala" id="sala" class="form-select" required>
+                    {% for sala in salas %}
+                        <option value="{{ sala.id }}" {% if reserva.sala.id == sala.id %}selected{% endif %}>
+                            {{ sala.nome }} 
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="data" class="form-label">Data:</label>
+                <input type="date" name="data" id="data" value="{{ reserva.data }}" class="form-control" required>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col">
+                    <label for="hora_inicio" class="form-label">Hora Início:</label>
+                    <input type="time" name="hora_inicio" id="hora_inicio" value="{{ reserva.hora_inicio }}" class="form-control" required>
+                </div>
+                <div class="col">
+                    <label for="hora_fim" class="form-label">Hora Fim:</label>
+                    <input type="time" name="hora_fim" id="hora_fim" value="{{ reserva.hora_fim }}" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Itens:</label>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for item in itens %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="itens" value="{{ item.id }}"
+                                   {% if item in reserva.itens.all %}checked{% endif %} id="item{{ item.id }}">
+                            <label class="form-check-label" for="item{{ item.id }}">{{ item.nome }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-atualizar">Atualizar Reserva</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

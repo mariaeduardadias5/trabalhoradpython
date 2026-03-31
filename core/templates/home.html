@@ -3,150 +3,179 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Salas e Reservas</title>
+    <title>Sistema de Reservas</title>
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f9f7ff; /* roxo bem claro de fundo */
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f6fb;
         }
 
-        h2 {
-            color: #4b0082; /* roxo escuro */
+        .navbar-custom {
+            background-color: #6f42c1;
         }
 
-        .card-header {
-            background-color: #d9c9ff; /* roxo claro */
-            font-weight: bold;
-            font-size: 1.1rem;
+        .navbar-custom a {
+            color: #fff;
         }
 
-        .card-body {
-            background-color: #f0e7ff;
+        .btn-nova {
+            background-color: #5a35a6;
+            color: #fff;
         }
 
-        .btn-primary {
-            background-color: #6f42c1; /* roxo médio */
-            border: none;
+        .btn-nova:hover {
+            background-color: #472b81;
         }
 
-        .btn-primary:hover {
-            background-color: #5a32a3;
+        .btn-minhas {
+            background-color: #4e8cff;
+            color: #fff;
         }
 
-        .btn-success {
-            background-color: #28a745; /* verde */
-            border: none;
+        .btn-minhas:hover {
+            background-color: #3b6fd0;
         }
 
-        .btn-danger {
-            background-color: #dc3545; /* vermelho */
-            border: none;
-        }
-
-        .reserva-item {
-            list-style-type: none;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .reserva-evento {
-            font-weight: bold;
-            color: #4b0082;
-        }
-
-        .reserva-usuario {
-            font-style: italic;
-        }
-
-        .reserva-horario {
-            color: #6f42c1;
-        }
-
-        .logout-btn {
+        .btn-sair {
             background-color: #dc3545;
-            color: white;
-            border-radius: 5px;
-            padding: 0.4rem 0.8rem;
-            border: none;
-            margin-left: 1rem;
+            color: #fff;
         }
 
-        .logout-btn:hover {
+        .btn-sair:hover {
             background-color: #b02a37;
+        }
+
+        .card-sala {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .card-sala:hover {
+            transform: translateY(-3px);
+        }
+
+        .badge-ocupada {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .badge-disponivel {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .list-reservas {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .list-reservas li {
+            padding: 6px 0;
+            border-bottom: 1px solid #e0e0e0;
         }
     </style>
 </head>
-<body>
-<div class="container mt-4">
 
-    <!-- Cabeçalho -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-custom px-4 py-3 mb-4">
+    <a class="navbar-brand fw-bold" href="{% url 'home' %}">Sistema de Reservas</a>
+
+    <div class="ms-auto">
         {% if request.user.is_authenticated %}
-            <h2>Seja bem-vindo, {{ request.user.first_name }}!</h2>
-            <div>
-                <a href="{% url 'nova_reserva' %}" class="btn btn-primary me-2">Nova Reserva</a>
-                <a href="{% url 'minhas_reservas' %}" class="btn btn-primary me-2">Minhas Reservas</a>
-                <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="logout-btn">Sair</button>
-                </form>
-            </div>
+            <span class="me-3 text-white fw-semibold">
+                Bem-vindo, {{ request.user.first_name }}!
+            </span>
+
+            <a href="{% url 'nova_reserva' %}" class="btn btn-nova btn-sm me-2">Nova Reserva</a>
+            <a href="{% url 'minhas_reservas' %}" class="btn btn-minhas btn-sm me-2">Minhas Reservas</a>
+
+            <form method="post" action="{% url 'logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sair btn-sm">Sair</button>
+            </form>
         {% else %}
-            <h2>Bem-vindo ao Sistema de Reservas</h2>
-            <div>
-                <a href="{% url 'login' %}" class="btn btn-success me-2">Login</a>
-                <a href="{% url 'signup' %}" class="btn btn-primary">Cadastrar</a>
-            </div>
+            <a href="{% url 'login' %}" class="btn btn-light btn-sm me-2">Entrar</a>
+            <a href="{% url 'signup' %}" class="btn btn-light btn-sm">Cadastrar</a>
         {% endif %}
     </div>
+</nav>
 
-    <!-- Salas e reservas -->
+<div class="container">
+
     {% if request.user.is_authenticated %}
         {% for sala_info in salas_status %}
-            <div class="card mb-3 shadow-sm">
-                <div class="card-header">
-                    {{ sala_info.sala.nome }} - Capacidade: {{ sala_info.sala.capacidade }}
-                </div>
-                <div class="card-body">
-                    {% if sala_info.reserva_atual %}
-                        <p class="text-danger"><strong>Ocupada agora:</strong> 
-                            <span class="reserva-usuario">{{ sala_info.reserva_atual.usuario.first_name }}</span> | 
-                            <span class="reserva-evento">{{ sala_info.reserva_atual.nome_evento }}</span>
-                        </p>
-                        <p class="reserva-horario"><strong>Horário:</strong> {{ sala_info.reserva_atual.hora_inicio }} - {{ sala_info.reserva_atual.hora_fim }}</p>
-                        <p><strong>Itens:</strong>
-                            {% for item in sala_info.reserva_atual.itens.all %}
+        <div class="card card-sala p-3">
+
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">
+                    {{ sala_info.sala.nome }} 
+                </h5>
+
+                {% if sala_info.reserva_atual %}
+                    <span class="badge badge-ocupada">Ocupada</span>
+                {% else %}
+                    <span class="badge badge-disponivel">Disponível</span>
+                {% endif %}
+            </div>
+
+            {% if sala_info.reserva_atual %}
+                <p class="mb-1">
+                    <strong>Evento:</strong> {{ sala_info.reserva_atual.nome_evento }}
+                </p>
+                <p class="mb-1">
+                    <strong>Reservado por:</strong> {{ sala_info.reserva_atual.usuario.first_name }}
+                </p>
+                <p class="mb-1">
+                    <strong>Horário:</strong> {{ sala_info.reserva_atual.hora_inicio }} - {{ sala_info.reserva_atual.hora_fim }}
+                </p>
+                <p class="mb-1">
+                    <strong>Itens:</strong>
+                    {% for item in sala_info.reserva_atual.itens.all %}
+                        {{ item.nome }}{% if not forloop.last %}, {% endif %}
+                    {% empty %} Nenhum {% endfor %}
+                </p>
+            {% endif %}
+
+            {% if sala_info.reservas %}
+                <hr>
+                <p class="fw-semibold mb-1">Reservas do dia:</p>
+
+                <ul class="list-reservas">
+                    {% for r in sala_info.reservas %}
+                        <li>
+                            <strong>{{ r.nome_evento }}</strong> — 
+                            {{ r.hora_inicio }} - {{ r.hora_fim }} |
+                            {{ r.usuario.first_name }} |
+                            Itens: 
+                            {% for item in r.itens.all %}
                                 {{ item.nome }}{% if not forloop.last %}, {% endif %}
                             {% empty %} Nenhum {% endfor %}
-                        </p>
-                    {% else %}
-                        <p class="text-success"><strong>Disponível agora ✅</strong></p>
-                    {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
 
-                    {% if sala_info.reservas %}
-                        <hr>
-                        <p><strong>Reservas do dia:</strong></p>
-                        <ul>
-                            {% for r in sala_info.reservas %}
-                                <li class="reserva-item">
-                                    <span class="reserva-horario">{{ r.hora_inicio }} - {{ r.hora_fim }}</span> | 
-                                    <span class="reserva-usuario">{{ r.usuario.first_name }}</span> | 
-                                    <span class="reserva-evento">{{ r.nome_evento }}</span> | Itens: 
-                                    {% for item in r.itens.all %}
-                                        {{ item.nome }}{% if not forloop.last %}, {% endif %}
-                                    {% empty %} Nenhum {% endfor %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </div>
-            </div>
+        </div>
         {% endfor %}
+
     {% else %}
-        <p class="mt-4">Para ver as salas e reservas, faça login ou cadastre-se.</p>
+        <div class="text-center mt-5">
+            <h4>Faça login ou cadastre-se para ver as salas e reservas</h4>
+        </div>
     {% endif %}
 
 </div>
+
 </body>
 </html>

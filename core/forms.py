@@ -3,16 +3,37 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
 class CustomUserCreationForm(forms.ModelForm):
-    password1 = forms.CharField(label="Senha", widget=forms.PasswordInput)
-    password2 = forms.CharField(label="Confirmação da senha", widget=forms.PasswordInput)
+
+    first_name = forms.CharField(
+        label="Nome",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    email = forms.EmailField(
+        label="E-mail",
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+
+    password1 = forms.CharField(
+        label="Senha",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+
+    password2 = forms.CharField(
+        label="Confirmação da senha",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
 
     class Meta:
         model = User
-        fields = ['first_name', 'email']  # só nome e email
-        labels = {
-            'first_name': 'Nome completo',
-            'email': 'E-mail',
+        fields = ['first_name', 'email', 'password1', 'password2']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
+
 
     def clean_password2(self):
         p1 = self.cleaned_data.get('password1')
@@ -28,3 +49,4 @@ class CustomUserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+

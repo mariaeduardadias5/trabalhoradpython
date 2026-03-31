@@ -51,15 +51,18 @@ def nova_reserva(request):
     itens = Item.objects.all()
 
     if request.method == "POST":
+        # Pegando os dados do formulário
+        nome_evento = request.POST.get('nome_evento')
         sala_id = request.POST.get('sala')
         data = request.POST.get('data')
         hora_inicio = request.POST.get('hora_inicio')
         hora_fim = request.POST.get('hora_fim')
         itens_selecionados = request.POST.getlist('itens')
 
+        # Pegando a sala escolhida
         sala = Sala.objects.get(id=sala_id)
 
-        
+        # Checando se já existe reserva para o horário
         reservas_existentes = Reserva.objects.filter(
             sala=sala,
             data=data,
@@ -70,19 +73,25 @@ def nova_reserva(request):
         if reservas_existentes.exists():
             messages.error(request, "Sala ocupada neste horário!")
         else:
+            # Criando a reserva
             reserva = Reserva.objects.create(
                 usuario=request.user,
                 sala=sala,
                 data=data,
                 hora_inicio=hora_inicio,
-                hora_fim=hora_fim
+                hora_fim=hora_fim,
+                nome_evento=nome_evento
             )
+            # Adicionando itens selecionados
             reserva.itens.set(itens_selecionados)
             reserva.save()
             messages.success(request, "Reserva criada com sucesso!")
             return redirect('home')
 
+    # Renderizando o template com as salas e itens
     return render(request, 'nova_reserva.html', {'salas': salas, 'itens': itens})
+
+
 
 @login_required
 def minhas_reservas(request):

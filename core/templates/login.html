@@ -1,36 +1,73 @@
-{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
 
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow p-4">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-            <h2 class="text-center mb-4">🔐 Login</h2>
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
-            <form method="post">
-                {% csrf_token %}
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6f42c1, #9b7bff);
+            height: 100vh;
+        }
 
-              <form method="post">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="email">E-mail</label>
-        <input type="text" name="email" id="email" class="form-control" required>
+        .card-login {
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-login {
+            background-color: #6f42c1;
+            color: #fff;
+        }
+
+        .btn-login:hover {
+            background-color: #5a35a6;
+        }
+
+        .link {
+            color: #6f42c1;
+            text-decoration: none;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body class="d-flex justify-content-center align-items-center">
+
+<div class="card card-login p-4" style="width: 350px;">
+    <h3 class="text-center mb-3">Login</h3>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+        <label>E-mail</label>
+        <input type="email" name="email" class="form-control">
     </div>
+
     <div class="mb-3">
-        <label for="password">Senha</label>
-        <input type="password" name="password" id="password" class="form-control" required>
+        <label>Senha</label>
+        <input type="password" name="password" class="form-control">
     </div>
-    <button type="submit" class="btn btn-success">Entrar</button>
-</form>
 
-            <hr>
+    <button type="submit" class="btn btn-login w-100">Entrar</button>
+    </form>
 
-            <p class="text-center">
-                Não tem conta? 
-                <a href="{% url 'signup' %}">Cadastre-se</a>
-            </p>
-
-        </div>
+    <div class="text-center mt-3">
+        <small>Não tem conta? <a href="{% url 'signup' %}" class="link">Cadastrar</a></small>
     </div>
 </div>
 
-{% endblock %}
+</body>
+</html>
