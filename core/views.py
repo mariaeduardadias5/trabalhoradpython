@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
@@ -51,7 +51,6 @@ def nova_reserva(request):
     itens = Item.objects.all()
 
     if request.method == "POST":
-        # Pegando os dados do formulário
         nome_evento = request.POST.get('nome_evento')
         sala_id = request.POST.get('sala')
         data = request.POST.get('data')
@@ -59,10 +58,9 @@ def nova_reserva(request):
         hora_fim = request.POST.get('hora_fim')
         itens_selecionados = request.POST.getlist('itens')
 
-        # Pegando a sala escolhida
+
         sala = Sala.objects.get(id=sala_id)
 
-        # Checando se já existe reserva para o horário
         reservas_existentes = Reserva.objects.filter(
             sala=sala,
             data=data,
@@ -73,7 +71,7 @@ def nova_reserva(request):
         if reservas_existentes.exists():
             messages.error(request, "Sala ocupada neste horário!")
         else:
-            # Criando a reserva
+            
             reserva = Reserva.objects.create(
                 usuario=request.user,
                 sala=sala,
@@ -82,13 +80,12 @@ def nova_reserva(request):
                 hora_fim=hora_fim,
                 nome_evento=nome_evento
             )
-            # Adicionando itens selecionados
+            
             reserva.itens.set(itens_selecionados)
             reserva.save()
-            messages.success(request, "Reserva criada com sucesso!")
             return redirect('home')
 
-    # Renderizando o template com as salas e itens
+    
     return render(request, 'nova_reserva.html', {'salas': salas, 'itens': itens})
 
 
@@ -100,28 +97,54 @@ def minhas_reservas(request):
 
 @login_required
 def editar_reserva(request, reserva_id):
-    reserva = Reserva.objects.get(id=reserva_id, usuario=request.user)
+    reserva = get_object_or_404(Reserva, id=reserva_id, usuario=request.user)
     salas = Sala.objects.all()
     itens = Item.objects.all()
 
     if request.method == "POST":
-        reserva.sala_id = request.POST.get('sala')
-        reserva.data = request.POST.get('data')
-        reserva.hora_inicio = request.POST.get('hora_inicio')
-        reserva.hora_fim = request.POST.get('hora_fim')
+        # Pegando dados do formulário
+        nome_evento = request.POST.get('nome_evento')
+        sala_id = request.POST.get('sala')
+        data = request.POST.get('data')
+        hora_inicio = request.POST.get('hora_inicio')
+        hora_fim = request.POST.get('hora_fim')
         itens_selecionados = request.POST.getlist('itens')
-        reserva.itens.set(itens_selecionados)
-        reserva.save()
-        messages.success(request, "Reserva atualizada!")
-        return redirect('minhas_reservas')
 
-    return render(request, 'editar_reserva.html', {'reserva': reserva, 'salas': salas, 'itens': itens})
+        sala = Sala.objects.get(id=sala_id)
+
+    
+        conflito = Reserva.objects.filter(
+            sala=sala,
+            data=data,
+            hora_inicio__lt=hora_fim,
+            hora_fim__gt=hora_inicio
+        ).exclude(id=reserva.id)
+
+        if conflito.exists():
+            messages.error(request, "Já existe uma reserva nesse horário!")
+        else:
+            # Atualizando os dados
+            reserva.nome_evento = nome_evento
+            reserva.sala = sala
+            reserva.data = data
+            reserva.hora_inicio = hora_inicio
+            reserva.hora_fim = hora_fim
+
+            reserva.save()
+            reserva.itens.set(itens_selecionados)
+
+            return redirect('minhas_reservas')
+
+    return render(request, 'editar_reserva.html', {
+        'reserva': reserva,
+        'salas': salas,
+        'itens': itens
+    })
 
 @login_required
 def deletar_reserva(request, reserva_id):
     reserva = Reserva.objects.get(id=reserva_id, usuario=request.user)
     reserva.delete()
-    messages.success(request, "Reserva excluída!")
     return redirect('minhas_reservas')
 
 def signup(request):
@@ -140,14 +163,18 @@ def login_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
         senha = request.POST.get("password")
+
         try:
             user = User.objects.get(email=email)
             user = authenticate(username=user.username, password=senha)
+
             if user is not None:
                 auth_login(request, user)
                 return redirect('home')
             else:
                 messages.error(request, "Senha incorreta.")
+
         except User.DoesNotExist:
             messages.error(request, "Email não encontrado.")
-    return render(request, 'login.html')
+
+        return render(request, 'login.html')

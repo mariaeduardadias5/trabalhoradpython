@@ -44,22 +44,25 @@
         }
 
         .btn-nova {
-            background-color: #5a35a6;
+            background-color: #4e8cff;
+            color: #fff;
+        }
+ 
+        .btn-nova:hover {
+            background-color: #3b6fd0;
             color: #fff;
         }
 
-        .btn-nova:hover {
-            background-color: #472b81;
-        }
-
         .btn-minhas {
-            background-color: #4e8cff;
+            background-color: #b99cf4;
             color: #fff;
         }
 
         .btn-minhas:hover {
-            background-color: #3b6fd0;
+           background-color: #8966cf;
+           color: #fff;
         }
+
 
         .btn-home{
           background-color: rgb(255, 255, 255) !important;
@@ -98,9 +101,20 @@
 </nav>
 
     <div class="container mt-4">
-    <h2 class="mb-4">Editar Reserva</h2>
+    
 
     <div class="card p-4 card-editar">
+        <h2>Editar Reserva</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
         <form method="post">
             {% csrf_token %}
 

@@ -39,13 +39,13 @@
         }
 
         .btn-minhas {
-            background-color: #4e8cff;
+            background-color: #b99cf4;
             color: #fff;
         }
 
         .btn-minhas:hover {
-            background-color: #3b6fd0;
-            color: #fff;
+           background-color: #8966cf;
+           color: #fff;
         }
 
       
@@ -94,6 +94,14 @@
 <div class="container d-flex justify-content-center mb-5">
     <div class="card card-form p-4" style="width: 500px;">
         <h3 class="text-center mb-3">Nova Reserva</h3>
+
+        {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 
         <form method="post">
             {% csrf_token %}

@@ -5,10 +5,7 @@
     <meta charset="UTF-8">
     <title>Sistema de Reservas</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Fonte -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
@@ -26,21 +23,23 @@
         }
 
         .btn-nova {
-            background-color: #5a35a6;
+            background-color: #4e8cff;
+            color: #fff;
+        }
+ 
+        .btn-nova:hover {
+            background-color: #3b6fd0;
             color: #fff;
         }
 
-        .btn-nova:hover {
-            background-color: #472b81;
-        }
-
         .btn-minhas {
-            background-color: #4e8cff;
+            background-color: #b99cf4;
             color: #fff;
         }
 
         .btn-minhas:hover {
-            background-color: #3b6fd0;
+           background-color: #8966cf;
+           color: #fff;
         }
 
         .btn-sair {
@@ -50,6 +49,7 @@
 
         .btn-sair:hover {
             background-color: #b02a37;
+            color: #fff;
         }
 
         .card-sala {
@@ -87,7 +87,6 @@
 
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-custom px-4 py-3 mb-4">
     <a class="navbar-brand fw-bold" href="{% url 'home' %}">Sistema de Reservas</a>
 
@@ -97,8 +96,8 @@
                 Bem-vindo, {{ request.user.first_name }}!
             </span>
 
-            <a href="{% url 'nova_reserva' %}" class="btn btn-nova btn-sm me-2">Nova Reserva</a>
             <a href="{% url 'minhas_reservas' %}" class="btn btn-minhas btn-sm me-2">Minhas Reservas</a>
+            <a href="{% url 'nova_reserva' %}" class="btn btn-nova btn-sm me-2">Nova Reserva</a>
 
             <form method="post" action="{% url 'logout' %}" class="d-inline">
                 {% csrf_token %}
