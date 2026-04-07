@@ -1,6 +1,6 @@
 UniSalas — Sistema de Reserva de Salas
 
-Aplicação web desenvolvida com **Django (Python)** para gerenciamento e reserva de salas em ambiente acadêmico.
+Aplicação web desenvolvida com Django (Python) para gerenciamento e reserva de salas em ambiente acadêmico.
 
 🚀 Funcionalidades:
 - 🔐 Login e Logout — autenticação segura de usuários
