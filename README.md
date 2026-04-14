@@ -9,7 +9,7 @@ Aplicação web desenvolvida com Django (Python) para gerenciamento e reserva de
 - ❌ Cancelamento de Reservas — gerenciamento das próprias reservas
 
 🛠️ Tecnologias Utilizadas:
-- Python 3
+- Python
 - Django
 - SQLite
 - HTML
