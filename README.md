@@ -12,7 +12,9 @@ Aplicação web desenvolvida com Django (Python) para gerenciamento e reserva de
 - Python 3
 - Django
 - SQLite
-- HTML5 + Bootstrap 5
+- HTML
+- CSS
+- Bootstrap
 
 Desenvolvido por: Maria Eduarda Dias Alves da Silva
 
