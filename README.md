@@ -18,4 +18,4 @@ Aplicação web desenvolvida com Django (Python) para gerenciamento e reserva de
 
 Desenvolvido por: Maria Eduarda Dias Alves da Silva
 
-Link de Acesso: mariaeduardadias5.pythonanywhere.com
+Link de Acesso: https://mariaeduardadias5.pythonanywhere.com/
