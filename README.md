@@ -4,9 +4,10 @@ Aplicação web desenvolvida com Django (Python) para gerenciamento e reserva de
 
 🚀 Funcionalidades:
 - 🔐 Login e Logout — autenticação segura de usuários
-- 🏢 Cadastro de Salas — criação, edição, listagem e exclusão de salas (CRUD completo)
-- 📅 Agendamento de Reservas — reserva de salas por data e horário
-- ❌ Cancelamento de Reservas — gerenciamento das próprias reservas
+- 🏢 Visualização das salas disponíveis
+- 📅 Gerenciamento de Reservas — criação, edição e exclusão de reservas (CRUD completo)
+- ⚠️ Validação de Conflitos — impede reservas duplicadas no mesmo horário
+- 🪑 Gerenciamento de Equipamentos — controle de itens disponíveis nas salas
 
 🛠️ Tecnologias Utilizadas:
 - Python
